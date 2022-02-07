@@ -8,7 +8,8 @@ import org.bukkit.plugin.java.JavaPlugin
 fun PersistentDataHolder.value(plugin: JavaPlugin) = Value(plugin, this)
 
 class Value(private val plugin: JavaPlugin, holder: PersistentDataHolder) {
-    val container = holder.persistentDataContainer
+    private val container = holder.persistentDataContainer
+
     operator fun <T, Z> set(key: String, type: PersistentDataType<T, Z>, value: Z) {
         if (value == null) return
 

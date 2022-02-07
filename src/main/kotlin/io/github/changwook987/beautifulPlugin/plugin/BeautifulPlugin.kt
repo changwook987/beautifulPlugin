@@ -12,7 +12,7 @@ class BeautifulPlugin : JavaPlugin() {
 
         listener.register()
 
-        val players = (server.onlinePlayers + server.offlinePlayers).toSet()
+        val players = server.onlinePlayers
 
         for (player in players) {
             if (player is Player) {

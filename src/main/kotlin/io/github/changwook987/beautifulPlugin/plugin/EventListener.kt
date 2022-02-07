@@ -5,9 +5,11 @@ import io.github.changwook987.beautifulPlugin.util.value
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.entity.Zombie
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.CraftItemEvent
+import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.ItemStack
@@ -16,6 +18,14 @@ import org.bukkit.scheduler.BukkitRunnable
 import java.util.*
 
 class EventListener(private val plugin: BeautifulPlugin) : Listener {
+
+    @EventHandler(ignoreCancelled = true)
+    fun onJoin(event: PlayerJoinEvent) {
+        val player = event.player
+
+        Heavy(plugin, player).runTaskTimer(plugin, 1L, 0L)
+    }
+
     //<editor-fold desc="조합이 개판이야!">
     @EventHandler(ignoreCancelled = false)
     fun onCraft(event: CraftItemEvent) {
@@ -48,14 +58,6 @@ class EventListener(private val plugin: BeautifulPlugin) : Listener {
     //</editor-fold>
 
     //<editor-fold desc="몸이 너무 무거워...">
-    @EventHandler(ignoreCancelled = false)
-    fun onJoin(event: PlayerJoinEvent) {
-        val player = event.player
-
-        Heavy(plugin, player).runTaskTimer(plugin, 1L, 0L)
-    }
-    //</editor-fold>
-
     class Heavy(private val plugin: BeautifulPlugin, private val player: Player) : BukkitRunnable() {
         private val queue: Queue<Location> = LinkedList()
 
@@ -76,5 +78,28 @@ class EventListener(private val plugin: BeautifulPlugin) : Listener {
                 }
             }
         }
+    }
+    //</editor-fold>
+
+    @EventHandler(ignoreCancelled = false)
+    fun onDropItem(event: PlayerDropItemEvent) {
+        val player = event.player
+        val item = event.itemDrop
+
+        val world = item.world
+
+        val zombie = world.spawn(item.location, Zombie::class.java)
+        zombie.apply {
+            equipment.apply {
+                setItemInMainHand(item.itemStack)
+                itemInMainHandDropChance = 0f
+            }
+
+            attack(player)
+
+            velocity = item.velocity.multiply(2)
+        }
+
+        item.remove()
     }
 }

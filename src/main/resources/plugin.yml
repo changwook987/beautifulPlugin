@@ -1,0 +1,8 @@
+name: ${pluginName}
+main: ${group}.${packageName}.plugin.${pluginName}
+version: ${version}
+api-version: 1.17
+libraries:
+  - org.jetbrains.kotlin:kotlin-stdlib:1.6.10
+  - org.jetbrains.kotlin:kotlin-reflect:1.6.10
+  - io.github.monun:kommand:2.8.1
